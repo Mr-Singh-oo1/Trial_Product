@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TM Cosmetic Inventory Form</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #0078D7;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    form fieldset {
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 5px;
+    }
+
+    form legend {
+      font-weight: bold;
+      color: #0078D7;
+      padding: 0 5px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .checkbox-group {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+
+    button {
+      background-color: #0078D7;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #005fa3;
+    }
+
+    #message {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      background: #d4edda;
+      color: #155724;
+      border-radius: 5px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧴 TM Cosmetic Inventory Form</h1>
+    <form id="inventoryForm">
+      <fieldset>
+        <legend>Product Details</legend>
+        <input type="text" placeholder="Product Name" name="ProductName" required />
+        <input type="text" placeholder="Brand" name="Brand_id" required />
+        <input type="text" placeholder="Category" name="category_id" />
+        <input type="text" placeholder="Subcategory" name="subcategory" />
+        <input type="text" placeholder="Size (e.g. 100ml)" name="size" />
+        <input type="text" placeholder="Unit of Measurement (e.g. 1PCS)" name="unit_of_measurment" />
+      </fieldset>
+
+      <fieldset>
+        <legend>Description & Media</legend>
+        <textarea placeholder="Product Description" name="productDescription"></textarea>
+        <input type="url" placeholder="Thumbnail URL" name="ThumbnailURL" />
+      </fieldset>
+
+      <fieldset>
+        <legend>Pricing & Status</legend>
+        <input type="number" placeholder="MRP (₹)" name="MRP" step="0.01" />
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="DiscountEligible" /> Discount Eligible</label>
+          <label><input type="checkbox" name="IsActive" /> Is Active</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Inventory Info</legend>
+        <input type="text" placeholder="Batch Number" name="BatchNumber" />
+        <input type="date" name="ExpiryDate" />
+        <input type="number" placeholder="Reorder Level" name="ReorderLevel" />
+        <input type="text" placeholder="Tags (comma-separated)" name="Tags" />
+      </fieldset>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="message">✅ Form submitted successfully!</div>
+  </div>
+
+  <script>
+    document.getElementById("inventoryForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const form = this;
+      const formData = new FormData(form);
+
+      fetch("/submit", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.text())
+      .then(data => {
+        const msg = document.getElementById("message");
+        msg.style.display = "block";
+        msg.textContent = "✅ Form submitted successfully!";
+        form.reset();
+
+        setTimeout(() => {
+          msg.style.display = "none";
+        }, 3000);
+      })
+      .catch(error => {
+        alert("❌ Submission failed: " + error);
+      });
+    });
+  </script>
+</body>
+</html>
