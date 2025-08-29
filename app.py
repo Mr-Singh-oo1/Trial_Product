@@ -1,79 +1,101 @@
-from flask import Flask, request, render_template
-from datetime import datetime
-import mysql.connector
-
-app = Flask(__name__)
-
-def insert_data(data):
-    conn = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='Password@123456789',
-        database='inventory_tm_cosmetic_db'
-    )
-    cursor = conn.cursor()
-
-    query = """
-        INSERT INTO inventory (
-            ProductName, Brand_id, category_id, subcategory, size,
-            unit_of_measurment, productDescription, ThumbnailURL, MRP,
-            DiscountEligible, IsActive, BatchNumber, ExpiryDate,
-            ReorderLevel, Tags
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    """
-
-    values = (
-        data["ProductName"],
-        data["Brand_id"],
-        data["category_id"],
-        data["subcategory"],
-        data["size"],
-        data["unit_of_measurment"],
-        data["productDescription"],
-        data["ThumbnailURL"],
-        data["MRP"],
-        data["DiscountEligible"],
-        data["IsActive"],
-        data["BatchNumber"],
-        data["ExpiryDate"],
-        data["ReorderLevel"],
-        data["Tags"]
-    )
-
-    cursor.execute(query, values)
-    conn.commit()
-    conn.close()
-
-@app.route('/')
-def home():
-    return render_template('form.html')
-
-@app.route('/submit', methods=['POST'])
-def submit():
-    form_data = {
-        "ProductName": request.form.get("ProductName"),
-        "Brand_id": request.form.get("Brand_id"),
-        "category_id": request.form.get("category_id"),
-        "subcategory": request.form.get("subcategory"),
-        "size": request.form.get("size"),
-        "unit_of_measurment": request.form.get("unit_of_measurment"),
-        "productDescription": request.form.get("productDescription"),
-        "ThumbnailURL": request.form.get("ThumbnailURL"),
-        "MRP": float(request.form.get("MRP") or 0),
-        "DiscountEligible": 'DiscountEligible' in request.form,
-        "IsActive": 'IsActive' in request.form,
-        "BatchNumber": request.form.get("BatchNumber"),
-        "ExpiryDate": request.form.get("ExpiryDate"),
-        "ReorderLevel": int(request.form.get("ReorderLevel") or 0),
-        "Tags": request.form.get("Tags")
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventory Entry Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f9f9f9;
     }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 600px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #0078D4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+  </style>
+</head>
+<body>
 
-    if form_data["ExpiryDate"]:
-        form_data["ExpiryDate"] = datetime.strptime(form_data["ExpiryDate"], "%Y-%m-%d")
+  <h2>Inventory Entry Form</h2>
 
-    insert_data(form_data)
+  <form method="POST" action="https://script.google.com/macros/s/AKfycbzxkcYCwzdYk0MVYy0rAABdcKwZDiwpI2elDDxjK1ynx2fhJcDNsMR84Z8_rkFiLwqzMw/exec">
+    <label for="ProductName">Product Name:</label>
+    <input type="text" id="ProductName" name="ProductName" required>
 
-    return f"✅ Stored product: {form_data['ProductName']} with MRP ₹{form_data['MRP']} successfully."
+    <label for="Brand_id">Brand ID:</label>
+    <input type="text" id="Brand_id" name="Brand_id">
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    <label for="category_id">Category ID:</label>
+    <input type="text" id="category_id" name="category_id">
+
+    <label for="subcategory">Subcategory:</label>
+    <input type="text" id="subcategory" name="subcategory">
+
+    <label for="size">Size:</label>
+    <input type="text" id="size" name="size">
+
+    <label for="unit_of_measurment">Unit of Measurement:</label>
+    <input type="text" id="unit_of_measurment" name="unit_of_measurment">
+
+    <label for="productDescription">Product Description:</label>
+    <textarea id="productDescription" name="productDescription"></textarea>
+
+    <label for="ThumbnailURL">Thumbnail URL:</label>
+    <input type="text" id="ThumbnailURL" name="ThumbnailURL">
+
+    <label for="MRP">MRP:</label>
+    <input type="number" id="MRP" name="MRP" step="0.01">
+
+    <label>
+      <input type="checkbox" name="DiscountEligible"> Discount Eligible
+    </label>
+
+    <label>
+      <input type="checkbox" name="IsActive"> Is Active
+    </label>
+
+    <label for="BatchNumber">Batch Number:</label>
+    <input type="text" id="BatchNumber" name="BatchNumber">
+
+    <label for="ExpiryDate">Expiry Date:</label>
+    <input type="date" id="ExpiryDate" name="ExpiryDate">
+
+    <label for="ReorderLevel">Reorder Level:</label>
+    <input type="number" id="ReorderLevel" name="ReorderLevel">
+
+    <label for="Tags">Tags:</label>
+    <input type="text" id="Tags" name="Tags">
+
+    <button type="submit">Submit</button>
+  </form>
+
+</body>
+</html>
