@@ -98,9 +98,10 @@
 <body>
   <div class="container">
     <h1>🧴 TM Cosmetic Inventory Form</h1>
-    <form id="inventoryForm">
+    <form id="inventoryForm" action="/submit" method="POST">
       <fieldset>
         <legend>Product Details</legend>
+        <input type="text" placeholder="Product ID" name="Product_id" required />
         <input type="text" placeholder="Product Name" name="ProductName" required />
         <input type="text" placeholder="Brand" name="Brand_id" required />
         <input type="text" placeholder="Category" name="category_id" />
@@ -152,7 +153,7 @@
       .then(data => {
         const msg = document.getElementById("message");
         msg.style.display = "block";
-        msg.textContent = "✅ Form submitted successfully!";
+        msg.textContent = data;
         form.reset();
 
         setTimeout(() => {
